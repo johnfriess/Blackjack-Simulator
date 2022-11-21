@@ -13,119 +13,119 @@ public class Blackjack { //program does not take into account cards currently in
             else
                 card[i] = 11;
         }
-        int p1 = card[(int)((Math.random() * 13))];
-        int p2 = card[(int)((Math.random() * 13))];
-        int d1 = card[(int)((Math.random() * 13))];
-        int d2 = card[(int)((Math.random() * 13))]; //unknown to player
+        boolean playAgain = true;
+        while(playAgain) {
+            int p1 = card[(int)((Math.random() * 13))];
+            int p2 = card[(int)((Math.random() * 13))];
+            int d1 = card[(int)((Math.random() * 13))];
+            int d2 = card[(int)((Math.random() * 13))]; //unknown to player
 
-        p1 = 11;
-        p2 = 11;
-        d1 = 10;
-        d2 = 11;
-        boolean stand = false;
-        ArrayList<Card> player = new ArrayList<>();
-        ArrayList<Card> dealer = new ArrayList<>();
-        player.add(new Card(p1)); player.add(new Card(p2));
-        dealer.add(new Card(d1)); dealer.add(new Card(d2));
+            boolean stand = false;
+            ArrayList<Card> player = new ArrayList<>();
+            ArrayList<Card> dealer = new ArrayList<>();
+            player.add(new Card(p1)); player.add(new Card(p2));
+            dealer.add(new Card(d1)); dealer.add(new Card(d2));
 
-        int index = 2;
-        int busted = 0;
-        int sum = p1 + p2;
-        int dSum = d1 + d2;
+            int index = 2;
+            int busted = 0;
+            int sum = p1 + p2;
+            int dSum = d1 + d2;
 
-        if(sum > 21) {
-            sum -= 10;
-            busted++;
-        }
+            if(sum > 21) {
+                sum -= 10;
+                busted++;
+            }
 
-        if(d1 != 11)
-            System.out.println("Dealer Hand: " + d1 + " ?");
-        else
-            System.out.println("Dealer Hand: 1/11 ?");
-        displayHand(player,"Player", sum, true);
+            if(d1 != 11)
+                System.out.println("\nDealer Hand: " + d1 + " ?");
+            else
+                System.out.println("Dealer Hand: 1/11 ?");
+            displayHand(player,"Player", sum, true);
 
 
-        while(!stand && sum != 21) {
-            System.out.println("H or S?");
-            String move = in.next();
-            int times = occur(player) - busted;
-            if(move.equals("H")) {
-                //hit(player);
-                player.add(new Card(11));
-                sum += player.get(index).value;
-                index++;
-                while(sum > 21) {
-                    busted++;
-                    if(times > 0) {
-                        sum -= 10;
-                    }
-                    else {
-                        displayHand(dealer, "Dealer", dSum, false);
-                        displayHand(player,"Player", sum, true);
-                        System.out.println();
-                        break;
+            while(!stand && sum != 21) {
+                System.out.println("H or S?");
+                String move = in.next();
+                int times = occur(player) - busted;
+                if(move.equals("H")) {
+                    hit(player);
+                    sum += player.get(index).value;
+                    index++;
+                    while(sum > 21) {
+                        busted++;
+                        if(times > 0) {
+                            sum -= 10;
+                        }
+                        else {
+                            stand = true;
+                            displayHand(dealer, "Dealer", dSum, false);
+                            displayHand(player,"Player", sum, true);
+                            System.out.println();
+                            break;
+                        }
                     }
                 }
-            }
-            else if(move.equals("S")) {
-                stand = true;
-                break;
-            }
-            else {
-                System.out.println("Please enter H or S");
-            }
-            System.out.println("Dealer Hand: " + d1 + " ?");
-            displayHand(player, "Player", sum, true);
-        }
-        System.out.println();
-        busted = 0;
-        index = 2;
-        if(sum > 21) {
-            System.out.println();
-            System.out.println("You lose. Dealer wins.");
-        }
-        else {
-            //if(sum < 21)
-            displayHand(dealer, "Dealer", dSum, true);
-            displayHand(player, "Player", sum, true);
-            while(dSum < 17) {
-                hit(dealer);
-                dSum += dealer.get(index).value;
-                index++;
-                int times = occur(dealer) - busted;
-                while(dSum > 21) {
-                    busted++;
-                    if (times > 0) {
-                        dSum -= 10;
-                    }
-                    else {
-                        break;
-                    }
+                else if(move.equals("S")) {
+                    stand = true;
+                    break;
                 }
-                System.out.println();
-                displayHand(dealer, "Dealer", dSum, true);
+                else {
+                    System.out.println("Please enter H or S");
+                }
+                System.out.println("\nDealer Hand: " + d1 + " ?");
                 displayHand(player, "Player", sum, true);
             }
             System.out.println();
-            if(dSum > 21) {
-                System.out.println("You win. Dealer loses.");
-            }
-            else if(dSum > sum) {
+            busted = 0;
+            index = 2;
+            if(sum > 21) {
+                System.out.println();
                 System.out.println("You lose. Dealer wins.");
             }
-            else if(dSum == sum) {
-                System.out.println("Draw.");
-            }
             else {
-                System.out.println("You win. Dealer loses.");
+                //if(sum < 21)
+                displayHand(dealer, "Dealer", dSum, true);
+                displayHand(player, "Player", sum, true);
+                while(dSum < 17) {
+                    hit(dealer);
+                    dSum += dealer.get(index).value;
+                    index++;
+                    int times = occur(dealer) - busted;
+                    while(dSum > 21) {
+                        busted++;
+                        if (times > 0) {
+                            dSum -= 10;
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                    System.out.println();
+                    displayHand(dealer, "Dealer", dSum, true);
+                    displayHand(player, "Player", sum, true);
+                }
+                System.out.println();
+                if(dSum > 21) {
+                    System.out.println("You win. Dealer loses.");
+                }
+                else if(dSum > sum) {
+                    System.out.println("You lose. Dealer wins.");
+                }
+                else if(dSum == sum) {
+                    System.out.println("Draw.");
+                }
+                else {
+                    System.out.println("You win. Dealer loses.");
+                }
             }
+            in.nextLine();
+            
+            System.out.println("Game ends:" +
+                               "\n  1. Play again" +
+                               "\n  2. Stop");
+            int decision = Integer.parseInt(in.nextLine());
+            playAgain = decision == 1 ? true : false;
         }
-        int pSum = p1 + p2;
-        int pDiff = 21 - pSum;
-        int dDiff = 21 - dSum;
-
-        //double pP = pDiff / 13.0;
-        //double dP = card[pSum - d1];
     }
 
     public static void hit(ArrayList<Card> cards) {
